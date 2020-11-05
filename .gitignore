@@ -1,0 +1,24 @@
+# Files from Dragon Ruby distro
+*/CHANGELOG.txt
+*/CHEATSHEET.md
+*/ctags-emacs
+*/ctags-vim
+*/dragon ruby README.md
+*/dragonruby*exe
+*/open-source-licenses.txt
+*/README-raspberrypi.txt
+*/samples/
+*/tmp/
+# Files from running Dragon Ruby
+*/console_history.txt
+*/.dragonruby/
+*/builds/
+*/exceptions/
+*/logs/
+# Files for itch.io butler
+# TODO: These shouldn't even be here
+*/butler.exe
+*/butler.zip
+*/butler-windows-amd64.zip
+*/c7zip.dll
+*/7z.dll
