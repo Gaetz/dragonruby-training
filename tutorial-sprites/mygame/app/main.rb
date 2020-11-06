@@ -62,4 +62,29 @@ def tick args
     args.state.hero_y = 720 - args.state.hero_size
   end
 
+  # Advanced entity spawning
+  # - Destructure args into local variables
+  grid, state, outputs = args.grid, args.state, args.outputs
+
+  # - Use Game Toolkit's built in helper methods to create adhoc entities
+  state.ninjas ||= 50.map do
+    state.new_entity(:ninja,
+                    { rect: [grid.w.-(50) * rand,
+                              grid.h.-(50) * rand,
+                              50,
+                              50] })
+  end
+  # - Use Ruby's powerful apis to determine collision
+  state.collisions ||= state.ninja
+                            .product
+                            .reject { |n, n2| n == n2 }
+                            .find_all { |n, n2| n.rect.intersects_rect?(n2.rect) }
+                            .map { |n, _| [n.entity_id, 128] }
+                            .pairs_to_hash
+  # - Render everything to the screen
+  outputs.sprites << state.ninjas.map do |n|
+    [n.rect, 'sprites/dragon-0.png', 0,
+      state.collisions[n.entity_id] || 255]
+  end
+
 end
