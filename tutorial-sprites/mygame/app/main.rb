@@ -1,39 +1,65 @@
 def tick args
-  # Display ticks
-  ticks = args.state.tick_count
-  args.outputs.labels << [640, 500, ticks, -5, 0, 200, 050, 100, 125]
+  # Display a sprite
+  SIZE = 100                
+  #                         x    y    w     h       path                  angle  A     R    G   B
+  args.outputs.sprites << [20 , 20, SIZE, SIZE, 'sprites/circle-indigo.png', 0, 255, 255, 255, 255]
 
-  # LABELS                x    y   text                   size al. r    g    b    a   font
-  args.outputs.labels << [200, 70, "Label and proud of it", 5, 0, 200, 050, 100, 200, "GeosansLight.ttf"]
-  # Alignment: 0 left, 1 center, 2 right
-  # LABELS with hash functions, longer to compile
-  args.outputs.labels << { x:10, y:500, text:"Hash label" }
+  # Hash sprite function
+  args.outputs.sprites << {
+    x: 200, y:400, w:100, h:100, path:'sprites/dragon-0.png', angle:45, a:255, r:255, g:255, b:255,
+    source_x: 5, source_y: 5, source_w: -2, source_h: -2,
+    flip_horizontally: true, flip_vertically:false,
+    angle_anchor_x:0.5, angle_anchor_y:1.0
+  }
 
-  # STATES
-  # If click_count doesn't exist, make it equal to 0
-  args.state.click_count ||= 0
+  #$gtk.reset
 
-  if args.inputs.mouse.up
-    args.state.click_count += 1
-    args.inputs.mouse.up = 0 # Needed so the mouse up does not continue. mouse.down does not need this.
-    # We can also use args.inputs.keyboard and args.inputs.controller, then .up, .down, .click, .held
+  # State variables
+  # - Init values
+  args.state.sprite_x ||= 10
+  args.state.sprite_y ||= 10
+  args.state.sprite_size ||= 32
+  # - Display
+  args.outputs.sprites << [args.state.sprite_x , args.state.sprite_y, args.state.sprite_size, args.state.sprite_size, 'sprites/circle-red.png', 45, 255, 255, 255, 255]
+  # - Change values (accelerating)
+  args.state.sprite_x = (args.state.sprite_x + args.state.tick_count / 1000) % 1280
+  args.state.sprite_y = (args.state.sprite_y + args.state.tick_count / 1000) % 720
+
+  # Movement
+  # - Init
+  args.state.hero_x ||= 500
+  args.state.hero_y ||= 500
+  args.state.hero_size ||= 64
+  args.state.hero_move_speed ||= 5
+  args.state.hero_direction ||= 0
+
+  args.outputs.sprites << [args.state.hero_x , args.state.hero_y, args.state.hero_size, args.state.hero_size, 'sprites/hexagon-blue.png', args.state.hero_direction, 255, 255, 255, 255]
+  # - Movement
+  if args.inputs.keyboard.d
+    args.state.hero_x = args.state.hero_x + args.state.hero_move_speed
+    args.state.hero_direction = 0
   end
-
-  args.outputs.labels << [50, 700, "Clicks: #{args.state.click_count}", 5, 0, 0, 0, 0, 255, "GeosansLight.ttf"]
-
-  # LINES                x1 y1 x2     y2   r   g    b   a
-  args.outputs.lines << [0, 0, 1280, 720, 255, 0, 255, 255]
-
-  # SOLIDS
-  board_x = 500
-  board_y = 500
-  board_w = 100
-  board_h = 100
-  #                           x         y       w       h      r    g   b a
-  args.outputs.borders << [board_x, board_y, board_w, board_h, 0, 255, 0, 255]
-  args.outputs.solids << [board_x+1, board_y+1, board_w - 2, board_h - 2, 50, 200, 150, 255]
-
-  # Reset the game each time we change the file
-  # $gtk.reset
+  if args.inputs.keyboard.q
+    args.state.hero_x = args.state.hero_x - args.state.hero_move_speed
+    args.state.hero_direction = 180
+  end
+  if args.inputs.keyboard.z
+    args.state.hero_y = args.state.hero_y + args.state.hero_move_speed 
+    args.state.hero_direction = 90
+  end
+  if args.inputs.keyboard.s
+    args.state.hero_y = args.state.hero_y - args.state.hero_move_speed
+    args.state.hero_direction = 270
+  end
+  # Boundaries
+  if args.state.hero_x < 0
+    args.state.hero_x = 0
+  elsif args.state.hero_x > 1280 - args.state.hero_size
+    args.state.hero_x = 1280 - args.state.hero_size
+  elsif args.state.hero_y < 0
+    args.state.hero_y = 0
+  elsif args.state.hero_y > 720 - args.state.hero_size
+    args.state.hero_y = 720 - args.state.hero_size
+  end
 
 end
