@@ -1,2 +1,0 @@
-date: Wed Oct 14 19:13:40 CDT 2020
-git: afde740fef203fa6f8b8d8e08ce136747894e7e3
